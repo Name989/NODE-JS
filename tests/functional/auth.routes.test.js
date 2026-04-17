@@ -16,6 +16,7 @@ const mockUser = {
 jest.mock('../../src/models/User', () => ({
   findOne: jest.fn(),
   findByPk: jest.fn(),
+  create: jest.fn(),
 }));
 
 let mockStoredTokenHash = null;
@@ -61,7 +62,87 @@ beforeAll(async () => {
 beforeEach(() => {
   User.findOne.mockReset();
   User.findByPk.mockReset();
+  User.create.mockReset();
   mockStoredRevoked = false;
+});
+
+describe('POST /auth/register', () => {
+  // F10
+  test('returns 201 for valid new registration', async () => {
+    User.findOne.mockResolvedValue(null);
+    User.create.mockResolvedValue({});
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: 'new@example.com', phone: '+911234567890', password: 'Test@1234' });
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({ success: true, message: 'User registered successfully' });
+  });
+
+  // F11
+  test('returns 409 for duplicate email', async () => {
+    User.findOne.mockResolvedValue(mockUser);
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: mockUser.email, phone: '+911234567890', password: 'Test@1234' });
+    expect(res.status).toBe(409);
+    expect(res.body.message).toBe('Email already registered');
+  });
+
+  // F12
+  test('returns 400 when email is missing', async () => {
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ phone: '+911234567890', password: 'Test@1234' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('email is required');
+  });
+
+  // F13
+  test('returns 400 when phone is missing', async () => {
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: 'new@example.com', password: 'Test@1234' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('phone is required');
+  });
+
+  // F14
+  test('returns 400 when password is missing', async () => {
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: 'new@example.com', phone: '+911234567890' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('password is required');
+  });
+
+  // F15
+  test('returns 400 for invalid email format', async () => {
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: 'notanemail', phone: '+911234567890', password: 'Test@1234' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('email is invalid');
+  });
+
+  // E7
+  test('returns 400 for whitespace-only password', async () => {
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: 'new@example.com', phone: '+911234567890', password: '   ' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('password is required');
+  });
+
+  // E8
+  test('accepts email with leading/trailing spaces (trims before use)', async () => {
+    User.findOne.mockResolvedValue(null);
+    User.create.mockResolvedValue({});
+    const res = await request(app)
+      .post('/auth/register')
+      .send({ email: '  spaced@example.com  ', phone: '+911234567890', password: 'Test@1234' });
+    expect(res.status).toBe(201);
+    expect(res.body.message).toBe('User registered successfully');
+  });
 });
 
 describe('POST /auth/login', () => {

@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'test';
 process.env.DB_HOST = 'localhost';
 process.env.DB_PORT = '5432';
 process.env.DB_NAME = 'nodejs_backend_test';

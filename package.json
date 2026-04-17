@@ -10,7 +10,8 @@
     "migrate:undo": "npx sequelize-cli db:migrate:undo",
     "test": "jest --runInBand --forceExit",
     "test:unit": "jest tests/unit --runInBand --forceExit",
-    "test:functional": "jest tests/functional --runInBand --forceExit"
+    "test:functional": "jest tests/functional --runInBand --forceExit",
+    "seed": "node scripts/seed-user.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

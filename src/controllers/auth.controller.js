@@ -58,4 +58,22 @@ async function logout(req, res, next) {
   }
 }
 
-module.exports = { login, verifyOtp, refresh, logout };
+async function register(req, res, next) {
+  try {
+    let { email, phone, password } = req.body;
+
+    if (!email || !email.trim()) return res.status(400).json({ success: false, message: 'email is required' });
+    if (!phone) return res.status(400).json({ success: false, message: 'phone is required' });
+    if (!password || !password.trim()) return res.status(400).json({ success: false, message: 'password is required' });
+    if (!/\S+@\S+\.\S+/.test(email.trim())) return res.status(400).json({ success: false, message: 'email is invalid' });
+
+    email = email.trim();
+
+    const result = await authService.register(email, phone, password);
+    return res.status(201).json({ success: true, ...result });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { login, verifyOtp, refresh, logout, register };

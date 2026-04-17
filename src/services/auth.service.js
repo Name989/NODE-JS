@@ -65,4 +65,20 @@ async function logout(rawRefreshToken) {
   await tokenService.revokeRefreshToken(rawRefreshToken);
 }
 
-module.exports = { login, verifyOtp, refreshAccessToken, logout };
+async function register(email, phone, password) {
+  const existing = await User.findOne({ where: { email } });
+  if (existing) {
+    const err = new Error('Email already registered');
+    err.status = 409;
+    throw err;
+  }
+
+  const password_hash = await bcrypt.hash(password, 12);
+  const totp_secret = totpService.generateSecret();
+
+  await User.create({ email, phone, password_hash, totp_secret });
+
+  return { message: 'User registered successfully' };
+}
+
+module.exports = { login, verifyOtp, refreshAccessToken, logout, register };
