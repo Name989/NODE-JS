@@ -1,0 +1,17 @@
+process.env.DB_HOST = 'localhost';
+process.env.DB_PORT = '5432';
+process.env.DB_NAME = 'nodejs_backend_test';
+process.env.DB_USER = 'postgres';
+process.env.DB_PASSWORD = 'postgres';
+process.env.JWT_SECRET = 'test_jwt_secret_that_is_at_least_32_chars_long';
+process.env.JWT_EXPIRES_IN = '15m';
+process.env.REFRESH_TOKEN_EXPIRES_DAYS = '7';
+process.env.TOTP_ISSUER = 'TestApp';
+process.env.EMAIL_HOST = 'smtp.test.com';
+process.env.EMAIL_PORT = '587';
+process.env.EMAIL_USER = 'test@test.com';
+process.env.EMAIL_PASS = 'testpass';
+process.env.EMAIL_FROM = 'test@test.com';
+process.env.TWILIO_ACCOUNT_SID = 'ACtest123';
+process.env.TWILIO_AUTH_TOKEN = 'testtoken';
+process.env.TWILIO_FROM_NUMBER = '+10000000000';
